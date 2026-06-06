@@ -25,7 +25,7 @@
                     },
                     colors: {
                         bg: '#030303',
-                        acid: '#D4FF00', // Web3/Trading highly visible accent
+                        acid: '#D4FF00', 
                         surface: '#111111'
                     }
                 }
@@ -34,24 +34,32 @@
     </script>
 
     <style>
+        /* RESET DASAR: Disesuaikan agar ramah Mobile/Tablet */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Hide body scroll */
             background-color: #030303;
             color: #ffffff;
-            cursor: none; /* Hide default cursor on desktop */
+            overscroll-behavior: none; /* Mencegah efek bounce di Android/iOS */
         }
 
-        /* Custom Cursor */
+        /* * KURSOR PINTAR: 
+         * Sembunyikan kursor asli HANYA di PC/Laptop yang punya mouse fisik.
+         * Di HP/Tablet, biarkan alami. 
+         */
+        @media (hover: hover) and (pointer: fine) {
+            body, html, .hover-target { cursor: none !important; }
+        }
+        @media (hover: none), (pointer: coarse) {
+            #custom-cursor { display: none !important; }
+        }
+
         #custom-cursor {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 20px;
-            height: 20px;
+            top: 0; left: 0;
+            width: 20px; height: 20px;
             border: 2px solid #D4FF00;
             border-radius: 50%;
             pointer-events: none;
@@ -61,40 +69,40 @@
             mix-blend-mode: difference;
         }
         #custom-cursor.hovering {
-            width: 60px;
-            height: 60px;
+            width: 60px; height: 60px;
             background-color: rgba(212, 255, 0, 0.2);
             border-color: transparent;
         }
 
-        /* NATIVE CSS SCROLL SNAP FOR ALL DEVICES */
+        /* NATIVE CSS SCROLL SNAP - Dioptimalkan untuk Tablet & HP */
         #slider-container {
             display: flex;
             width: 100vw;
             height: 100dvh;
-            overflow-x: auto; /* Enable native horizontal scroll/swipe */
+            overflow-x: auto; 
             overflow-y: hidden;
-            scroll-snap-type: x mandatory; /* Force snap to slide */
+            scroll-snap-type: x mandatory; 
             scroll-behavior: smooth;
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -webkit-overflow-scrolling: touch; /* KUNCI UTAMA AGAR BISA SWIPE DI HP/TABLET */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
         }
         #slider-container::-webkit-scrollbar {
-            display: none; /* Hide scrollbar completely */
+            display: none;
         }
 
         .slide {
-            width: 100vw;
+            flex: 0 0 100vw; /* Pastikan ukuran slide mengunci di 100vw */
             height: 100dvh;
             position: relative;
-            flex-shrink: 0; /* Prevent squishing */
-            scroll-snap-align: start; /* Snap point */
+            scroll-snap-align: start; 
+            scroll-snap-stop: always;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6rem 1.5rem 6rem 1.5rem;
+            padding: 6rem 1.5rem;
             box-sizing: border-box;
-            overflow-y: auto; /* Let content inside slide scroll if it's too long */
+            overflow-y: auto; 
             overflow-x: hidden;
         }
         .slide::-webkit-scrollbar { display: none; }
@@ -102,22 +110,16 @@
         /* Abstract Background Canvas */
         #bg-canvas {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
             opacity: 0.3;
+            pointer-events: none; /* Jangan biarkan canvas memblokir sentuhan */
         }
 
         /* Navigation Dots */
-        .nav-dot {
-            transition: all 0.3s ease;
-        }
-        .nav-dot.active {
-            height: 2rem;
-            background-color: #D4FF00;
-        }
+        .nav-dot { transition: all 0.3s ease; }
+        .nav-dot.active { height: 2rem; background-color: #D4FF00; }
 
         /* Staggered Reveal Animations */
         .reveal-up {
@@ -130,33 +132,23 @@
             transform: translateY(0);
         }
 
-        /* Glitch effect for main title */
-        .glitch-wrapper {
-            position: relative;
-        }
-        .glitch-text {
-            position: relative;
-            z-index: 2;
-        }
+        /* Glitch Effect */
+        .glitch-wrapper { position: relative; }
+        .glitch-text { position: relative; z-index: 2; }
         .glitch-text::before, .glitch-text::after {
             content: attr(data-text);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
             background: #030303;
         }
         .glitch-text::before {
-            left: 2px;
-            text-shadow: -2px 0 red;
+            left: 2px; text-shadow: -2px 0 red;
             clip: rect(24px, 550px, 90px, 0);
             animation: glitch-anim 3s infinite linear alternate-reverse;
             z-index: -1;
         }
         .glitch-text::after {
-            left: -2px;
-            text-shadow: -2px 0 #D4FF00;
+            left: -2px; text-shadow: -2px 0 #D4FF00;
             clip: rect(85px, 550px, 140px, 0);
             animation: glitch-anim 2.5s infinite linear alternate-reverse;
             z-index: -2;
@@ -171,7 +163,6 @@
             100% { clip: rect(34px, 9999px, 12px, 0); }
         }
 
-        /* Section Specific Styles */
         .expertise-card {
             border-left: 1px solid rgba(255,255,255,0.1);
             transition: all 0.4s ease;
@@ -182,7 +173,6 @@
             padding-left: 1.5rem;
         }
 
-        /* Profile Image Animation */
         @keyframes dim-bright {
             0%, 100% { filter: brightness(1); opacity: 1; }
             50% { filter: brightness(0.2); opacity: 0.7; }
@@ -197,24 +187,16 @@
             opacity: 1;
         }
 
-        /* Custom Scrollbar for Modal */
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #D4FF00; }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            #custom-cursor { display: none; }
-            body, html { cursor: auto; }
-            .slide { align-items: flex-start; padding-top: 20vh; }
-        }
     </style>
 </head>
-<body class="font-mono bg-bg text-white overflow-hidden selection:bg-acid selection:text-black">
+<body class="font-mono text-white selection:bg-acid selection:text-black">
 
     <!-- Custom Cursor -->
-    <div id="custom-cursor" class="hidden md:block"></div>
+    <div id="custom-cursor"></div>
 
     <!-- Background Canvas -->
     <canvas id="bg-canvas"></canvas>
@@ -237,7 +219,7 @@
     </div>
 
     <!-- Scroll Hint -->
-    <div class="fixed bottom-8 right-8 z-50 flex items-center gap-4 text-xs tracking-widest text-gray-500 font-mono">
+    <div class="fixed bottom-8 right-8 z-50 flex items-center gap-4 text-xs tracking-widest text-gray-500 font-mono pointer-events-none">
         <span class="hidden md:inline">SCROLL TO NAVIGATE</span>
         <span class="md:hidden">SWIPE TO NAVIGATE</span>
         <i data-lucide="arrow-right" class="w-4 h-4 animate-pulse text-acid"></i>
@@ -267,12 +249,10 @@
                 <div class="md:w-1/2 flex justify-center md:justify-end reveal-up mt-10 md:mt-0" style="transition-delay: 0.6s;">
                     <!-- Profil Image Responsive -->
                     <div class="relative w-48 h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 group hover-target rounded-full p-2 border border-gray-800 hover:border-acid transition-colors duration-500 shadow-[0_0_0_rgba(212,255,0,0)] hover:shadow-[0_0_30px_rgba(212,255,0,0.15)] mx-auto md:mx-0">
-                        
                         <div class="w-full h-full bg-surface overflow-hidden relative rounded-full">
                             <div class="absolute inset-0 bg-acid/10 mix-blend-overlay z-10 group-hover:bg-transparent transition-colors duration-700"></div>
                             <img src="https://raw.githubusercontent.com/hendroah/Portofolio-WEB3/4ce1d8b3d776ed9a9261d5040f8cfee4780e09fc/IMG-20260602-WA0080.jpg" alt="Hend Profile" class="w-full h-full object-cover transition-all duration-700 transform group-hover:scale-105 animate-dim-bright" onerror="this.src='https://github.com/hendroah.png';">
                         </div>
-                        
                         <div class="absolute bottom-2 right-2 md:bottom-6 md:right-0 bg-bg px-3 py-1 text-xs font-mono text-acid border border-gray-800 z-20 shadow-[4px_4px_0px_0px_rgba(212,255,0,0.2)] group-hover:-translate-y-1 transition-transform duration-300">
                             ID: HEND_
                         </div>
@@ -389,4 +369,7 @@
 
                     <!-- Group 3 -->
                     <div class="space-y-8">
-                        <div class="border-t border-gray-800 pt-4 h
+                        <div class="border-t border-gray-800 pt-4 hover-target group h-full">
+                            <h3 class="font-display text-xl text-acid font-bold mb-3 uppercase scramble" data-text="RESEARCH">RESEARCH</h3>
+                            <ul class="text-gray-400 font-mono text-sm space-y-2">
+                         
